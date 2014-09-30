@@ -2,6 +2,7 @@ package com.epam.jmp.classloader.core;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
@@ -12,10 +13,12 @@ public class Menu {
     
     private static final Logger log = LoggerFactory.getLogger(Menu.class);
     
-    private final String[] items = { "Load class", "Reload class", "Exit" };
+    private final String[] items = { "Load class", "Reload class", "Run user command", "Exit" };
     
     private final Logger out;
     private final BufferedReader reader;
+    private final CustomClassLoader classLoader = CustomClassLoader.getInstance();
+    
     
     public Menu(Logger out, BufferedReader reader) {
         this.out = out;
@@ -42,8 +45,20 @@ public class Menu {
                     break;
                 case 2:
                 case 3:
+                    Class<?> res = classLoader.getUserCommandClass();
+                    if (null != res) {
+                        try {
+                            com = (Command)res.getConstructors()[0].newInstance(out, reader);
+                        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException e) {
+                            log.error("Can't create new istance of " + res.getCanonicalName(), e);
+                        }
+                    }
+                    break;
+                case 4:
                     com = new ExitCommand(out, reader);
+                    break;
                 default:
+                    break;
             }
             return com;
         }

@@ -11,7 +11,7 @@ public class LoadClassCommand implements Command {
     
     private static final Logger log = LoggerFactory.getLogger(LoadClassCommand.class);
     
-    private static ClassLoader classLoader = new CustomClassLoader();
+    private static CustomClassLoader classLoader = CustomClassLoader.getInstance();
     
     private final Logger out;
     private final BufferedReader reader;
@@ -21,12 +21,14 @@ public class LoadClassCommand implements Command {
         this.reader = reader;
     }
     
+    @Override
     public void execute() throws IOException {
         out.info("Print class name:");
         String val = reader.readLine();
         try {
-            LoadClassCommand.classLoader.loadClass(val);
-            out.info("YRA");
+            Class<?> result = LoadClassCommand.classLoader.loadClass(val);
+            out.info("Class " + val + " has been successfully loaded.");
+            classLoader.setUserCommandClass(result);
         } catch (ClassNotFoundException e) {
             LoadClassCommand.log.error("Class " + val + " can't be loaded", e);
             out.info(e.getMessage());

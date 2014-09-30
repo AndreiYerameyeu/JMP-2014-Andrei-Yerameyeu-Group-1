@@ -2,8 +2,33 @@ package com.epam.jmp.classloader.core;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class CustomClassLoader extends ClassLoader {
+    
+    private static final Logger log = LoggerFactory.getLogger(CustomClassLoader.class);
+    private static final Logger console = LoggerFactory.getLogger("Console");
+    private static final CustomClassLoader INSTANCE = new CustomClassLoader();
+    
+    private Class<?> userCommandClass;
+    
+    public static CustomClassLoader getInstance() {
+        return INSTANCE;
+    }
+    
+    private CustomClassLoader() {
+        
+    }
+    
+    public Class<?> getUserCommandClass() {
+        return userCommandClass;
+    }
+    
+    public void setUserCommandClass(Class<?> userCommandClass) {
+        this.userCommandClass = userCommandClass;
+    }
     
     @Override
     protected synchronized Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
@@ -12,14 +37,18 @@ public class CustomClassLoader extends ClassLoader {
             ClassLoader parent = getParent();
             if (null != parent) {
                 try {
-                    // Should we delegate classloading to parent first?
-                    // c = parent.loadClass(name);
+                    c = parent.loadClass(name);
                 } catch (Exception e) {
                     
                 }
             }
             if (null == c) {
                 c = findClass(name);
+                if (null != c) {
+                    console.info("Class was loaded by Custom Classloader");
+                }
+            } else {
+                console.info("Class was loaded by System Classloader");
             }
         }
         if (null == c) {
@@ -73,12 +102,12 @@ public class CustomClassLoader extends ClassLoader {
             try {
                 is.close();
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                log.error("IOException", e);
             }
         }
         
         Class<?> c = defineClass(_name, bytes, 0, bytes.length);
         return c;
     }
+    
 }
