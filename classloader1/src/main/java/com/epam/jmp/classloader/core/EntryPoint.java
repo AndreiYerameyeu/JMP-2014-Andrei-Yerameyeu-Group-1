@@ -22,7 +22,9 @@ public class EntryPoint {
                 menu.display();
                 Command command = menu.read();
                 if (command != null) {
-                    command.execute();
+                    if (command.execute() < 0) {
+                        break;
+                    }
                 } else {
                     EntryPoint.consoleLog.info("Not a valid choise.");
                 }

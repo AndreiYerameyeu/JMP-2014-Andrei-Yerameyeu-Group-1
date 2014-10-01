@@ -17,10 +17,11 @@ public class ExitCommand implements Command {
         this.out = out;
     }
     
-    public void execute() throws IOException {
+    @Override
+    public int execute() throws IOException {
         out.info("Exiting...");
         ExitCommand.log.info("Exiting...");
-        System.exit(0);
+        return -1;
     }
     
 }

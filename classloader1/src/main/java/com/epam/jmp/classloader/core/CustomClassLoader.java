@@ -1,7 +1,11 @@
 package com.epam.jmp.classloader.core;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +19,7 @@ public class CustomClassLoader extends ClassLoader {
     private Class<?> userCommandClass;
     
     public static CustomClassLoader getInstance() {
-        return INSTANCE;
+        return CustomClassLoader.INSTANCE;
     }
     
     private CustomClassLoader() {
@@ -38,21 +42,25 @@ public class CustomClassLoader extends ClassLoader {
             if (null != parent) {
                 try {
                     c = parent.loadClass(name);
+                    if (null != c) {
+                        CustomClassLoader.console.info("Class " + name + " was loaded by parent System Classloader");
+                    }
                 } catch (Exception e) {
-                    
+                    CustomClassLoader.log.error("Can't load class " + name + " by parent", e);
                 }
             }
             if (null == c) {
                 c = findClass(name);
                 if (null != c) {
-                    console.info("Class was loaded by Custom Classloader");
+                    CustomClassLoader.console.info("Class " + name + " was loaded by Custom Classloader");
                 }
-            } else {
-                console.info("Class was loaded by System Classloader");
             }
         }
         if (null == c) {
             c = super.loadClass(name, resolve);
+            if (null != c) {
+                CustomClassLoader.console.info("Class " + name + " was loaded by super Classloader");
+            }
         }
         if (resolve) {
             resolveClass(c);
@@ -62,52 +70,64 @@ public class CustomClassLoader extends ClassLoader {
     
     @Override
     protected Class<?> findClass(String _name) throws ClassNotFoundException {
-        
-        for (int i = 0; i < _name.length(); i++) {
-            char c = _name.charAt(i);
-            if (c == '.' || Character.isJavaIdentifierPart(c)) {
-                continue;
-            }
-            throw new ClassNotFoundException(_name);
-        }
-        
-        String classFileName = _name.replace('.', java.io.File.separatorChar) + ".class";
-        java.net.URL url = getResource(classFileName);
-        if (url == null) {
-            url = ClassLoader.getSystemResource(classFileName);
-        }
-        if (url == null) {
-            url = this.getClass().getResource(classFileName);
-        }
-        if (url == null) {
-            url = this.getClass().getClassLoader().getResource(classFileName);
-        }
-        if (url == null) {
-            throw new ClassNotFoundException(_name);
-        }
+        String className = getClassName(_name);
+        String classFileName = getClassFilePath(_name);
+        File f = new File(classFileName);
         byte[] bytes = null;
-        java.io.InputStream is = null;
+        InputStream is = null;
         try {
-            java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
-            is = url.openStream();
+            is = f.toURI().toURL().openStream();
             byte[] buffer = new byte[1024];
             int i = 0;
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
             while ((i = is.read(buffer)) >= 0) {
                 baos.write(buffer, 0, i);
             }
             bytes = baos.toByteArray();
         } catch (Exception e) {
-            throw new ClassNotFoundException(_name, e);
+            throw new ClassNotFoundException(className, e);
         } finally {
             try {
-                is.close();
+                if (null != is) {
+                    is.close();
+                }
             } catch (IOException e) {
-                log.error("IOException", e);
+                CustomClassLoader.log.error("IOException", e);
             }
         }
-        
-        Class<?> c = defineClass(_name, bytes, 0, bytes.length);
-        return c;
+        if (bytes.length > 0) {
+            
+            Class<?> c = defineClass(className, bytes, 0, bytes.length);
+            return c;
+        }
+        throw new ClassNotFoundException("Can't load file " + _name);
     }
     
+    private String getClassName(String _name) {
+        String classPostfix = ".class";
+        String[] res = StringUtils.split(_name, java.io.File.separatorChar);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 1; i < res.length; i++) {
+            sb.append(res[i]);
+            if (i < res.length - 1) {
+                sb.append('.');
+            }
+        }
+        String className = sb.toString();
+        if (className.endsWith(classPostfix)) {
+            className = className.substring(0, className.length() - classPostfix.length());
+        }
+        return className;
+    }
+    
+    private String getClassFilePath(String _name) {
+        String classFileName = _name;
+        String classPostfix = ".class";
+        if (classFileName.endsWith(classPostfix)) {
+            classFileName = classFileName.substring(0, classFileName.length() - classPostfix.length());
+        }
+        classFileName = classFileName.replace('.', java.io.File.separatorChar);
+        classFileName += classPostfix;
+        return classFileName;
+    }
 }
