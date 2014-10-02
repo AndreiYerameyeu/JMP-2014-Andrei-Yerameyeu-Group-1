@@ -35,6 +35,8 @@ public class CustomClassLoader extends ClassLoader {
     }
     
     @Override
+    //TODO why do you need to override this method, you have not added any new logic
+    //was not it enough to override just findClass?
     protected synchronized Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
         Class<?> c = findLoadedClass(name);
         if (null == c) {
@@ -75,6 +77,7 @@ public class CustomClassLoader extends ClassLoader {
         File f = new File(classFileName);
         byte[] bytes = null;
         InputStream is = null;
+        //TODO use  try(InputStream is = f.toURI().toURL().openStream()){
         try {
             is = f.toURI().toURL().openStream();
             byte[] buffer = new byte[1024];

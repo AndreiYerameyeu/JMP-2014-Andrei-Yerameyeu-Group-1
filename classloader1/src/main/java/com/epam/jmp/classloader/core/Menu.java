@@ -43,7 +43,7 @@ public class Menu {
                 case 1:
                     com = new LoadClassCommand(out, reader);
                     break;
-                case 2:
+                case 2: //TODO not implemented why no break?
                 case 3:
                     Class<?> res = classLoader.getUserCommandClass();
                     if (null != res) {

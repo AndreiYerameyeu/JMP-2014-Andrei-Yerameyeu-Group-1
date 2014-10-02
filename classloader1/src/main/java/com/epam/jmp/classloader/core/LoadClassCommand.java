@@ -61,6 +61,7 @@ public class LoadClassCommand implements Command {
                     try {
                         Class<?> result = jarLoader.loadClass(val);
                         out.info("Class " + val + " has been successfully loaded.");
+                        //TODO very strange approach... 
                         LoadClassCommand.classLoader.setUserCommandClass(result);
                     } catch (ClassNotFoundException e) {
                         LoadClassCommand.log.error("Class " + val + " can't be loaded", e);

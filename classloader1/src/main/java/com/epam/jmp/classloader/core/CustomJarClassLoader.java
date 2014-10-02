@@ -12,7 +12,8 @@ import org.slf4j.LoggerFactory;
 import sun.misc.Resource;
 import sun.misc.URLClassPath;
 
-
+//TODO almost the same code, why you write different class... 
+//TODO you should not use internal classes of the hotspot
 public class CustomJarClassLoader extends ClassLoader {
     
     private static final Logger log = LoggerFactory.getLogger(CustomJarClassLoader.class);

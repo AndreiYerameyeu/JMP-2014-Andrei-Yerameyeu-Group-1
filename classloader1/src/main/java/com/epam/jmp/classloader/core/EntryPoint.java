@@ -16,9 +16,10 @@ public class EntryPoint {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         boolean done = false;
         EntryPoint.consoleLog.info("Classloader task 1.");
+        //TODO Why are you passing log to constructor? 
         Menu menu = new Menu(EntryPoint.consoleLog, reader);
         try {
-            while (!done) {
+            while (!done) { //TODO why not just while(true)?
                 menu.display();
                 Command command = menu.read();
                 if (command != null) {
