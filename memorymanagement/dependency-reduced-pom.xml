@@ -55,7 +55,7 @@
           <executable>java</executable>
           <arguments>
             <argument>-Xss${thread.stack.size}</argument>
-            <argument>-S0:S1:Eden=${newgen.ration}</argument>
+            <argument>-XX:SurvivorRatio=${survivor.ratio}</argument>
             <argument>-Xmx${max.heap.size}</argument>
             <argument>-classpath</argument>
             <classpath />
@@ -70,19 +70,18 @@
       <id>Task1</id>
       <properties>
         <thread.stack.size>2m</thread.stack.size>
+        <survivor.ratio>2</survivor.ratio>
         <max.heap.size>1024m</max.heap.size>
-        <newgen.ration>2:4:5</newgen.ration>
+        <app.main.class>com.epam.jmp.memorymanagement.core.MemoryEater</app.main.class>
       </properties>
     </profile>
     <profile>
-      <id>Task7</id>
+      <id>Task2</id>
       <properties>
-        <max.pg.size>18m</max.pg.size>
-        <max.heap.size>16m</max.heap.size>
-        <min.heap.size>4m</min.heap.size>
-        <yg.size>2m</yg.size>
-        <min.pg.size>12m</min.pg.size>
-        <gc.version>G1GC</gc.version>
+        <thread.stack.size>1m</thread.stack.size>
+        <survivor.ratio>1</survivor.ratio>
+        <max.heap.size>256m</max.heap.size>
+        <app.main.class>com.epam.jmp.memorymanagement.core.ReferenceTask</app.main.class>
       </properties>
     </profile>
   </profiles>
@@ -110,7 +109,6 @@
     <gc.version>SerialGC</gc.version>
     <commons-lang.version>3.3.2</commons-lang.version>
     <max.heap.size>512m</max.heap.size>
-    <app.main.class>com.epam.jmp.garbagecollector.core.Main</app.main.class>
     <log4j.version>1.2.17</log4j.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
