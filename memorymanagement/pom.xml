@@ -137,8 +137,8 @@
 			<properties>
 				<thread.stack.size>2m</thread.stack.size>
 				<max.heap.size>1024m</max.heap.size>
-				<survivor.ratio>2</survivor.ratio>
 				<app.main.class>com.epam.jmp.memorymanagement.core.MemoryEater</app.main.class>
+				<survivor.ratio>1</survivor.ratio>
 			</properties>
 		</profile>
 		<profile>
