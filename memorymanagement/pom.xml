@@ -7,7 +7,7 @@
 <properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<app.main.class>com.epam.jmp.garbagecollector.core.Main</app.main.class>
+		<app.main.class>com.epam.jmp.memorymanagement.core.Main</app.main.class>
 		<junit.version>4.11</junit.version>
 
 		<log4j.version>1.2.17</log4j.version>
@@ -118,7 +118,7 @@
 					<executable>java</executable>
 					<arguments>
 						<argument>-Xss${thread.stack.size}</argument>
-						<argument>-S0:S1:Eden=${newgen.ration}</argument>
+						<argument>-XX:SurvivorRatio=${survivor.ration}</argument>
 						<argument>-Xmx${max.heap.size}</argument>
 						<argument>-classpath</argument>
 						<!-- automatically creates the classpath using all project dependencies, 
@@ -138,7 +138,7 @@
 			<properties>
 				<thread.stack.size>2m</thread.stack.size>
 				<max.heap.size>1024m</max.heap.size>
-				<newgen.ration>2:4:5</newgen.ration>
+				<survivor.ration>1</survivor.ration>
 			</properties>
 		</profile>
 		<profile>
