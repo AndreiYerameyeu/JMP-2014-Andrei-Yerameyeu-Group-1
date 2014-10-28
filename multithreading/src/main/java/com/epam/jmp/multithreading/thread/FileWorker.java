@@ -49,11 +49,35 @@ public class FileWorker {
     
     public static FileWorker getInstance(String filePath) {
         if (!FileWorker.cache.containsKey(filePath)) {
-            return FileWorker._getInstance(filePath);
+            try {
+                FileWorker.singletonLock.lock();
+                if (!FileWorker.cache.containsKey(filePath)) {
+                    return FileWorker._getInstance(filePath);
+                } else {
+                    FileWorker res = FileWorker.cache.get(filePath).get();
+                    if (null == res) {
+                        return FileWorker._getInstance(filePath);
+                    } else {
+                        return res;
+                    }
+                }
+            } finally {
+                FileWorker.singletonLock.unlock();
+            }
         } else {
             FileWorker res = FileWorker.cache.get(filePath).get();
             if (null == res) {
-                return FileWorker._getInstance(filePath);
+                try {
+                    FileWorker.singletonLock.lock();
+                    res = FileWorker.cache.get(filePath).get();
+                    if (null == res) {
+                        return FileWorker._getInstance(filePath);
+                    } else {
+                        return res;
+                    }
+                } finally {
+                    FileWorker.singletonLock.unlock();
+                }
             } else {
                 return res;
             }
@@ -80,15 +104,10 @@ public class FileWorker {
     }
     
     private static FileWorker _getInstance(String filePath) {
-        try {
-            FileWorker.singletonLock.lock();
-            FileWorker fw = new FileWorker(filePath);
-            FileWorker.cache.put(filePath, new SoftReference<FileWorker>(fw));
-            FileWorker.log.info("New FileWorker was created for filePath=" + filePath);
-            return fw;
-        } finally {
-            FileWorker.singletonLock.unlock();
-        }
+        FileWorker fw = new FileWorker(filePath);
+        FileWorker.cache.put(filePath, new SoftReference<FileWorker>(fw));
+        FileWorker.log.info("New FileWorker was created for filePath=" + filePath);
+        return fw;
     }
     
     public String read(BufferedReader fr) {
