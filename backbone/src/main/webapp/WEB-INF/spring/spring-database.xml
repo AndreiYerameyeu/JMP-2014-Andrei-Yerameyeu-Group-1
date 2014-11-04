@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-4.0.xsd  
+http://www.springframework.org/schema/data/jpa
+http://www.springframework.org/schema/data/jpa/spring-jpa-1.0.xsd  
+http://www.springframework.org/schema/tx
+http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+
+	<beans:bean id="databasePropertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<beans:property name="location" value="classpath:/config/database.properties" />
+	</beans:bean>
+
+	<beans:bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+		<beans:property name="url" value="${database.url}" />
+		<beans:property name="driverClassName" value="${database.driver}" />
+		<beans:property name="username" value="${database.user}" />
+		<beans:property name="password" value="${database.password}" />
+		<beans:property name="poolPreparedStatements" value="true" />
+		<beans:property name="initialSize" value="15" />
+	</beans:bean>
+
+	<beans:bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<beans:constructor-arg ref="dataSource" />
+	</beans:bean>
+
+</beans:beans>
