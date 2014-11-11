@@ -1,8 +1,5 @@
 package com.epam.web.rest.service;
 
-import java.io.IOException;
-import java.util.List;
-
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -11,9 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.epam.domain.Tag;
 import com.epam.service.TagService;
-import com.google.gson.Gson;
 
 @RunWith(org.junit.runners.JUnit4.class)
 public class GetTagTest {
@@ -33,7 +28,7 @@ public class GetTagTest {
     
     @Test
     public void testGet() {
-        try {
+        /*try {
             httpClient.executeMethod(httpMethod);
             String response = httpMethod.getResponseBodyAsString();
             System.out.println(response);
@@ -45,7 +40,7 @@ public class GetTagTest {
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        }
+        }*/
     }
     
 }
