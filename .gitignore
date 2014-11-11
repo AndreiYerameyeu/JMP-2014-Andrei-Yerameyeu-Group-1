@@ -1,0 +1,12 @@
+.settings/
+*/*.classpath
+.class
+*target/classes/*
+garbagecollector/target
+memorymanagement/target
+multithreading/target
+memorymanagement/src/main/java/com/epam/jmp/memorymanagement/core/MemoryEater.java
+junitmodule/target/test-classes/com/epam/junitmodule/TestEasyBackgroundDownload.class
+backbone/target/
+backbone/Projects/
+backbone/.project
