@@ -8,7 +8,7 @@ public class LoggerProfilerController implements LoggerProfilerControllerMBean {
     
     private final Logger LOG = LoggerFactory.getLogger(LoggerProfilerController.class);
     
-    private boolean enableProfiling;
+    private boolean enableProfiling = true;
     
     public boolean isEnableProfiling() {
         return enableProfiling;

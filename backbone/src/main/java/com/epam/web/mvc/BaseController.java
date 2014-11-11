@@ -1,4 +1,4 @@
-package com.epam.web;
+package com.epam.web.mvc;
 
 import java.util.Locale;
 
@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping(value = "")
 public class BaseController {
     
-    protected final String allUrl = "/home";
+    protected final String allUrl = "/";
+    protected final String homeUrl = "/home";
+    protected final String indexUrl = "/index*";
     
-    @RequestMapping(value = { allUrl }, method = { RequestMethod.POST, RequestMethod.GET })
+    @RequestMapping(value = { homeUrl, allUrl, indexUrl }, method = { RequestMethod.POST, RequestMethod.GET })
     public String homePage(HttpServletRequest request, Locale loc) {
         return "home";
     }

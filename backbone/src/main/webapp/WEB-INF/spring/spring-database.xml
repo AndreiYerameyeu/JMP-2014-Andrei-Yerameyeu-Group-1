@@ -8,21 +8,57 @@ http://www.springframework.org/schema/data/jpa/spring-jpa-1.0.xsd
 http://www.springframework.org/schema/tx
 http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
 
-	<beans:bean id="databasePropertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<beans:property name="location" value="classpath:/config/database.properties" />
-	</beans:bean>
-
 	<beans:bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
 		<beans:property name="url" value="${database.url}" />
 		<beans:property name="driverClassName" value="${database.driver}" />
 		<beans:property name="username" value="${database.user}" />
 		<beans:property name="password" value="${database.password}" />
 		<beans:property name="poolPreparedStatements" value="true" />
-		<beans:property name="initialSize" value="15" />
+		<beans:property name="initialSize" value="${dbcp.initialSize}" />
 	</beans:bean>
 
 	<beans:bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
 		<beans:constructor-arg ref="dataSource" />
 	</beans:bean>
+	
+	<beans:bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <beans:property name="dataSource" ref="dataSource"/>
+        <beans:property name="jpaVendorAdapter">
+            <beans:bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
+        </beans:property>
+        <beans:property name="packagesToScan" value="com.epam.domain"/>
+        <beans:property name="jpaProperties">
+            <beans:props>
+                <beans:prop key="hibernate.show_sql">${hibernate.show_sql}</beans:prop>
+                <beans:prop key="hibernate.cglib.use_reflection_optimizer">true</beans:prop>
+                <beans:prop key="hibernate.debug">${hibernate.debug}</beans:prop>
+                <beans:prop key="hibernate.format_sql">${hibernate.format_sql}</beans:prop>
+                <beans:prop key="hibernate.dialect">${hibernate.dialect}</beans:prop>
+                <beans:prop key="hibernate.default_schema">${database.schema}</beans:prop>
+                <beans:prop key="hibernate.cache.use_second_level_cache">${hibernate.cache.use_second_level_cache}
+                </beans:prop>
+                <beans:prop key="hibernate.cache.region.factory_class">
+                    org.hibernate.cache.ehcache.EhCacheRegionFactory
+                </beans:prop>
+                <beans:prop key="hibernate.cache.use_query_cache">${hibernate.cache.use_query_cache}</beans:prop>
+                <beans:prop key="hibernate.cache.use_structured_entries">${hibernate.cache.use_structured_entries}
+                </beans:prop>
+                <beans:prop key="hibernate.cache.provider_configuration_file_resource_path">classpath:/ehcache.xml
+                </beans:prop>
+                <beans:prop key="hibernate.connection.CharSet">${database.charset}</beans:prop>
+                <beans:prop key="hibernate.connection.characterEncoding">${database.charset}</beans:prop>
+                <beans:prop key="hibernate.connection.useUnicode">${hibernate.connection.useUnicode}</beans:prop>
+            </beans:props>
+        </beans:property>
+    </beans:bean>
+
+    <jpa:repositories base-package="com.epam.repository" entity-manager-factory-ref="entityManagerFactory"
+                      transaction-manager-ref="transactionManager"/>
+
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <beans:bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <beans:property name="entityManagerFactory" ref="entityManagerFactory"/>
+    </beans:bean>
 
 </beans:beans>
