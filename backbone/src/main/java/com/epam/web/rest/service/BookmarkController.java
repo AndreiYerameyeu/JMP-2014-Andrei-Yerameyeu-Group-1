@@ -1,9 +1,6 @@
 package com.epam.web.rest.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -14,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.epam.domain.Bookmark;
-import com.epam.domain.Tag;
 import com.epam.service.BookmarkService;
 import com.epam.service.TagService;
 
@@ -44,42 +40,8 @@ public class BookmarkController {
         if (idValue < 1) {
             return null;
         }
-        Bookmark toSave = bookmarkService.findOne(idValue);
-        if (null != title) {
-            toSave.setTitle(title);
-        }
-        if (null != url) {
-            toSave.setUrl(url);
-        }
-        
-        toSave = bookmarkService.save(toSave);
-        
         String[] tagsArray = StringUtils.split(tags, ',');
-        List<Tag> tagList = tagService.findAllByBookmark(toSave.getId());
-        
-        Map<String, Tag> tagsMap = new HashMap<String, Tag>();
-        for (int i = 0; i < tagList.size(); i++) {
-            Tag tag = tagList.get(i);
-            tagsMap.put(tag.getTag(), tag);
-        }
-        
-        List<Tag> newTags = new ArrayList<Tag>();
-        for (int i = 0; i < tagsArray.length; i++) {
-            String newTagValue = tagsArray[i];
-            Tag oldTag = tagsMap.remove(newTagValue);
-            if (null == oldTag) {
-                Tag newTag = new Tag();
-                newTag.setBookmark(toSave);
-                newTag.setTag(newTagValue);
-                newTags.add(newTag);
-            } else {
-                newTags.add(oldTag);
-            }
-        }
-        
-        tagService.delete(tagsMap.values());
-        tagService.save(newTags);
-        
+        Bookmark toSave = bookmarkService.save(idValue, title, url, tagsArray);
         return toSave;
     }
     
@@ -88,19 +50,9 @@ public class BookmarkController {
         if (null != id) {
             return saveBookmark(id, url, title, tags);
         }
-        Bookmark newBookmark = new Bookmark();
-        newBookmark.setTitle(title);
-        newBookmark.setUrl(url);
-        newBookmark = bookmarkService.save(newBookmark);
         String[] tagsArray = StringUtils.split(tags, ',');
-        List<Tag> newTags = new ArrayList<Tag>();
-        for (int i = 0; i < tagsArray.length; i++) {
-            Tag newTag = new Tag();
-            newTag.setTag(tagsArray[i]);
-            newTag.setBookmark(newBookmark);
-            newTags.add(newTag);
-        }
-        tagService.save(newTags);
+        Bookmark newBookmark = bookmarkService.save(title, url, tagsArray);
+        
         return newBookmark;
     }
     

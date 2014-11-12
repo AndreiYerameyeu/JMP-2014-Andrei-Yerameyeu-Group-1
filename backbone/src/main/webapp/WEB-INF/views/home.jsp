@@ -86,8 +86,8 @@
 		</div>
 	</div>
 
-	<script src="<c:url value="${lib}/lib/jquery.js"/>"></script>
-	<script src="<c:url value="${lib}/lib/underscore.js"/>"></script>
+	<script src="<c:url value="${lib}/jquery.js"/>"></script>
+	<script src="<c:url value="${lib}/underscore.js"/>"></script>
 	<script src="<c:url value="${lib}/backbone.js"/>"></script>
 	<script src="<c:url value="${js}/app.js"/>"></script>
 </body>

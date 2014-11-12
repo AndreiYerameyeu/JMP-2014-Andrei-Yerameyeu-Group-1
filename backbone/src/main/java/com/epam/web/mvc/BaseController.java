@@ -18,6 +18,7 @@ public class BaseController {
     
     @RequestMapping(value = { homeUrl, allUrl, indexUrl }, method = { RequestMethod.POST, RequestMethod.GET })
     public String homePage(HttpServletRequest request, Locale loc) {
+        request.getSession().getId();
         return "home";
     }
     
