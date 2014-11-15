@@ -80,15 +80,18 @@
 			<div class="col-xs-2">
 				<h4>Bookmark's Tags</h4>
 				<ul id="tagCountList">
-
 				</ul>
 			</div>
 		</div>
 	</div>
-
+	
 	<script src="<c:url value="${lib}/jquery.js"/>"></script>
 	<script src="<c:url value="${lib}/underscore.js"/>"></script>
 	<script src="<c:url value="${lib}/backbone.js"/>"></script>
 	<script src="<c:url value="${js}/app.js"/>"></script>
+	
+	<script type="text/template" id="tagCount_template">
+		<a href="{{link}}">{{tag}}({{count}})</a>
+	</script>
 </body>
 </html>
