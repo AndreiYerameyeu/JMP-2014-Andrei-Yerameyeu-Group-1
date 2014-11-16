@@ -16,15 +16,12 @@ bookmarkApp.routers.AppRouter = Backbone.Router.extend({
 });
 
 bookmarkApp.models.BookmarkModel = Backbone.Model.extend({
-    url: 'bookmark'
 });
 
 bookmarkApp.models.TagModel = Backbone.Model.extend({
-
 });
 
-bookmarkApp.models.TagCountModel = Backbone.Model.extend({
-    
+bookmarkApp.models.TagCountModel = Backbone.Model.extend({ 
 });
 
 bookmarkApp.collections.TagCountListCollection = Backbone.Collection.extend({
@@ -33,9 +30,8 @@ bookmarkApp.collections.TagCountListCollection = Backbone.Collection.extend({
 });
 
 bookmarkApp.collections.TagListCollection = Backbone.Collection.extend({
-    //bookmarkid : '',
     model: bookmarkApp.models.TagModel,
-    url: 'tag?bookmarkid='// + bookmarkid
+    url: 'tag?bookmarkid='
 });
 
 bookmarkApp.collections.BookmarkListCollection = Backbone.Collection.extend({
@@ -67,26 +63,65 @@ bookmarkApp.views.BookmarkListContainerView = Backbone.View.extend({
     }
 });
 
-bookmarkApp.views.BookmarkView = Backbone.View.extend({
-    
+bookmarkApp.views.BookmarkTagView = Backbone.View.extend({
+    model: bookmarkApp.models.TagModel,
+    tagName: 'span',
     initialize: function() {
-        
+    	this.template = _.template($('#bookmarkTagList_template').html());
     },
-    
     render: function() {
-        
+        this.$el.html(this.template(this.model.toJSON()));
+        return this;
+    }
+});
+
+bookmarkApp.views.BookmarkView = Backbone.View.extend({
+    model: bookmarkApp.models.BookmarkModel,
+    tagName: 'li',
+    initialize: function() {
+    	this.template = _.template($('#bookmark_template').html());
+    },
+    render: function() {
+        this.$el.html(this.template(this.model.toJSON()));
+        var tags = this.model.get('tags');
+        if (tags.length > 0) {
+        	this.$el.append(' | ');
+        	for (var i = 0; i < tags.length; i++) {
+        		var tagModel = new bookmarkApp.models.TagModel({tag: tags[i].tag});
+        		this.$el.append((new bookmarkApp.views.BookmarkTagView({model: tagModel})).render().$el);
+        		if (i < tags.length - 1) {
+        			this.$el.append(', ');
+        		}
+        	}
+        }
         return this;
     }
 });
 
 bookmarkApp.views.BookmarkListView = Backbone.View.extend({
-    
+    model: new bookmarkApp.collections.BookmarkListCollection(),
+    el: $('#bookmarkList'),
     initialize: function() {
-        
+    	var self = this;
+        this.model.fetch({
+        	success: function() {
+        		console.log(self.model);
+        		self.render();
+        	},
+        	error: function() {
+        		console.log('Cannot retrieve models from server');
+        	}
+        });
+        this.model.on('add', this.render, this);  
+        this.model.on('remove', this.render, this);  
     },
     
     render: function() {
-        
+    	var self = this;
+        self.$el.html('');
+        _.each(this.model.toArray(), function(bookmarkModel, i) {
+        	self.$el.append((new bookmarkApp.views.BookmarkView({model: bookmarkModel})).render().$el);
+        });
         return this;
     }
 });
@@ -141,5 +176,6 @@ $(document).ready(function() {
 	_.templateSettings = {
 		interpolate: /\{\{(.+?)\}\}/g
 	};
-    var appView = new bookmarkApp.views.TagCountListView();
+    var tagCountListView = new bookmarkApp.views.TagCountListView();
+    var bookmarkListView = new bookmarkApp.views.BookmarkListView();
 });

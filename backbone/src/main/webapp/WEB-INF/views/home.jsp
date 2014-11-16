@@ -72,7 +72,7 @@
 							id="clearFilter" href="#">Clear Filter</a>
 					</h2>
 					<ul id="bookmarkList">
-
+						
 					</ul>
 				</div>
 			</div>
@@ -89,9 +89,14 @@
 	<script src="<c:url value="${lib}/underscore.js"/>"></script>
 	<script src="<c:url value="${lib}/backbone.js"/>"></script>
 	<script src="<c:url value="${js}/app.js"/>"></script>
-	
 	<script type="text/template" id="tagCount_template">
 		<a href="{{link}}">{{tag}}({{count}})</a>
+	</script>
+	<script type="text/template" id="bookmark_template">
+		{{title}}({{url}})
+	</script>
+	<script type="text/template" id="bookmarkTagList_template">
+		{{tag}}
 	</script>
 </body>
 </html>
