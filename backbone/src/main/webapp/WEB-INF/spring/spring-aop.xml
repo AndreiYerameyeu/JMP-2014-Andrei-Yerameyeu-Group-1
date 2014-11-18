@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:beans="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:util="http://www.springframework.org/schema/util"
 	xmlns:p="http://www.springframework.org/schema/p"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
@@ -12,17 +13,31 @@ http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
 http://www.springframework.org/schema/util  
 http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 
-	<beans:bean id="repositoryLogger" class="com.epam.logger.RepositoryLogger"/>
-	
-	<aop:config>
-		<aop:aspect ref="repositoryLogger">
-			<aop:pointcut id="repositoryPerformanceMeasuringWithArgs" expression="execution(* com.epam.repository.*.*(..)) and args(args,..)"/>
-			<aop:pointcut id="repositoryPerformanceMeasuring" expression="execution(* com.epam.repository.*.*())"/>
-			<aop:around	pointcut-ref="repositoryPerformanceMeasuringWithArgs" 
-				method="measurePerformanceWithArgs" arg-names="args"/>
-			<aop:around pointcut-ref="repositoryPerformanceMeasuring"
-				method="measurePerformance"/>
-		</aop:aspect>
-	</aop:config>
+	<!-- <beans:bean id="repositoryLogger" class="com.epam.logger.RepositoryLogger"/> 
+		<aop:config> <aop:aspect ref="repositoryLogger"> <aop:pointcut id="repositoryPerformanceMeasuringWithArgs" 
+		expression="execution(* com.epam.repository.*.*(..)) and args(args,..)"/> 
+		<aop:pointcut id="repositoryPerformanceMeasuring" expression="execution(* 
+		com.epam.repository.*.*())"/> <aop:around pointcut-ref="repositoryPerformanceMeasuringWithArgs" 
+		method="measurePerformanceWithArgs" arg-names="args"/> <aop:around pointcut-ref="repositoryPerformanceMeasuring" 
+		method="measurePerformance"/> </aop:aspect> </aop:config> -->
+
+	<beans:bean name="traceInterceptor" class="com.epam.logger.TraceInterceptor">
+		<property name="enterMessage"
+			value="ENTER: $[targetClassShortName].$[methodName]($[arguments])" />
+		<property name="exitMessage"
+			value="EXIT: $[targetClassShortName].$[methodName]() : $[invocationTime]ms : $[returnValue]" />
+	</beans:bean>
+
+	<beans:bean
+		class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+		<beans:property name="beanNames" value="*Controller*" />
+		<beans:property name="proxyTargetClass" value="true" />
+		<beans:property name="interceptorNames">
+			<list>
+				<value>traceInterceptor</value>
+			</list>
+		</beans:property>
+		<beans:property name="order" value="2" />
+	</beans:bean>
 
 </beans>
