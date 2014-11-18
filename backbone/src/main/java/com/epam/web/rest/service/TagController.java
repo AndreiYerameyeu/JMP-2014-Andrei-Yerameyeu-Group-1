@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,8 +28,8 @@ public class TagController {
     @Autowired
     protected TagService tagService;
     
-    @RequestMapping(params = { "id" }, method = { RequestMethod.GET })
-    public Tag getTagById(@RequestParam(value = "id", required = true) String id) {
+    @RequestMapping(value = { "/{id}" }, method = { RequestMethod.GET })
+    public Tag getTagById(@PathVariable String id) {
         return tagService.findOne(NumberUtils.toLong(id, 0));
     }
     
@@ -43,12 +44,12 @@ public class TagController {
     }
     
     @RequestMapping(method = { RequestMethod.GET })
-    public List<Tag> getAllTags(@RequestParam(value = "all", required = false) String all) {
+    public List<Tag> getAllTags() {
         return tagService.findAll();
     }
     
     @RequestMapping(value = { "/tagCount", "/tagcount" }, method = { RequestMethod.GET })
-    public List<TagCountModel> getAllTagCount(HttpServletRequest request, @RequestParam(value = "all", required = false) String all) {
+    public List<TagCountModel> getAllTagCount(HttpServletRequest request) {
         List<TagCountModel> tagCountModels = new ArrayList<TagCountModel>();
         
         Map<String, List<Bookmark>> counts = new HashMap<String, List<Bookmark>>();

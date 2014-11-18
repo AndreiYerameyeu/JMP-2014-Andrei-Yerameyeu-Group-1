@@ -150,6 +150,9 @@ bookmarkApp.views.TagCountListView = Backbone.View.extend({
         	self.$el.append((new bookmarkApp.views.TagCountView({model: tagCount})).render().$el);
         });
         return this;
+    },
+    refresh: function() {
+    	
     }
     
 });
@@ -166,16 +169,12 @@ bookmarkApp.views.TagCountView = Backbone.View.extend({
     }
 });
 
-
-Backbone.history.start({
-    pushState: true/false,
-    root: ''
-});
-
 $(document).ready(function() {
 	_.templateSettings = {
 		interpolate: /\{\{(.+?)\}\}/g
 	};
     var tagCountListView = new bookmarkApp.views.TagCountListView();
     var bookmarkListView = new bookmarkApp.views.BookmarkListView();
+    var router = new bookmarkApp.routers.AppRouter();
+    Backbone.history.start();
 });

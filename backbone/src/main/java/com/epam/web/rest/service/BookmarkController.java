@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,13 +29,13 @@ public class BookmarkController {
     @Autowired
     protected TagService tagService;
     
-    @RequestMapping(params = { "id" }, method = { RequestMethod.GET })
-    public Bookmark getBookmarkById(@RequestParam(value = "id", required = true) String id) {
+    @RequestMapping(value = { "/{id}" }, method = { RequestMethod.GET })
+    public Bookmark getBookmarkById(@PathVariable String id) {
         return bookmarkService.findOne(NumberUtils.toLong(id, 0));
     }
     
     @RequestMapping(method = { RequestMethod.GET })
-    public List<BookmarkModel> getAllBookmarks(@RequestParam(value = "all", required = false) String all) {
+    public List<BookmarkModel> getAllBookmarks() {
         List<BookmarkModel> bookmarkModels = new ArrayList<BookmarkModel>();
         
         List<Bookmark> allBookmarks = bookmarkService.findAll();
@@ -56,8 +57,8 @@ public class BookmarkController {
         return bookmarkModels;
     }
     
-    @RequestMapping(params = { "id" }, method = { RequestMethod.POST, RequestMethod.PUT })
-    public Bookmark saveBookmark(@RequestParam(value = "id", required = true) String id, @RequestParam(value = "url", required = false) String url, @RequestParam(value = "title", required = false) String title, @RequestParam(value = "tags", required = false) String tags) {
+    @RequestMapping(value = { "/{id}" }, method = { RequestMethod.PUT })
+    public Bookmark saveBookmark(@PathVariable String id, @RequestParam(value = "url", required = false) String url, @RequestParam(value = "title", required = false) String title, @RequestParam(value = "tags", required = false) String tags) {
         Long idValue = NumberUtils.toLong(id, 0);
         if (idValue < 1) {
             return null;
@@ -67,19 +68,16 @@ public class BookmarkController {
         return toSave;
     }
     
-    @RequestMapping(method = { RequestMethod.POST, RequestMethod.PUT })
-    public Bookmark createBookmark(@RequestParam(value = "id", required = false) String id, @RequestParam(value = "url", required = true) String url, @RequestParam(value = "title", required = true) String title, @RequestParam(value = "tags", required = true) String tags) {
-        if (null != id) {
-            return saveBookmark(id, url, title, tags);
-        }
+    @RequestMapping(method = { RequestMethod.POST })
+    public Bookmark createBookmark(@RequestParam(value = "url", required = true) String url, @RequestParam(value = "title", required = true) String title, @RequestParam(value = "tags", required = true) String tags) {
         String[] tagsArray = StringUtils.split(tags, ',');
         Bookmark newBookmark = bookmarkService.save(title, url, tagsArray);
         
         return newBookmark;
     }
     
-    @RequestMapping(method = { RequestMethod.DELETE })
-    public void deleteBookmark(@RequestParam(value = "id", required = true) String id) {
+    @RequestMapping(value = { "/{id}" }, method = { RequestMethod.DELETE })
+    public void deleteBookmark(@PathVariable String id) {
         Long idValue = NumberUtils.toLong(id, 0);
         tagService.delete(idValue);
     }
