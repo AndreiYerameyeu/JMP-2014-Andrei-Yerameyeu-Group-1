@@ -19,12 +19,13 @@ http://www.springframework.org/schema/context/spring-context.xsd">
 	<mvc:resources mapping="/resources/**" location="/resources/"
 		cache-period="31556926" />
 
-	<!-- <mvc:view-controller path="/" view-name="home" />
-	<mvc:view-controller path="/index.*" view-name="home" /> -->
+	<!-- <mvc:view-controller path="/" view-name="home" /> <mvc:view-controller 
+		path="/index.*" view-name="home" /> -->
 
 	<beans:bean
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<beans:property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+		<beans:property name="viewClass"
+			value="org.springframework.web.servlet.view.JstlView" />
 		<beans:property name="prefix" value="/WEB-INF/views/" />
 		<beans:property name="suffix" value=".jsp" />
 	</beans:bean>
@@ -48,6 +49,26 @@ http://www.springframework.org/schema/context/spring-context.xsd">
 	<beans:bean id="localeResolver"
 		class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
 		<beans:property name="defaultLocale" value="ru" />
+	</beans:bean>
+
+	<beans:bean name="traceInterceptor" class="com.epam.logger.TraceInterceptor" init-method="init">
+	    <beans:property name="mBeanRegisterService" ref="mBeanRegisterService" />
+		<beans:property name="enterMessage"
+			value="ENTER: $[targetClassShortName].$[methodName]($[arguments])" />
+		<beans:property name="exitMessage"
+			value="EXIT: $[targetClassShortName].$[methodName]() : $[invocationTime]ms" />
+	</beans:bean>
+
+	<beans:bean
+		class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+		<beans:property name="beanNames" value="*Controller" />
+		<beans:property name="proxyTargetClass" value="true" />
+		<beans:property name="interceptorNames">
+			<beans:list>
+				<beans:value>traceInterceptor</beans:value>
+			</beans:list>
+		</beans:property>
+		<beans:property name="order" value="2" />
 	</beans:bean>
 
 </beans:beans>

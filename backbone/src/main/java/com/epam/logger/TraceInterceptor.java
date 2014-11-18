@@ -1,38 +1,35 @@
 package com.epam.logger;
 
-import java.lang.management.ManagementFactory;
-
-import javax.management.InstanceAlreadyExistsException;
-import javax.management.MBeanRegistrationException;
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.NotCompliantMBeanException;
-import javax.management.ObjectName;
-
 import org.aopalliance.intercept.MethodInvocation;
-import org.slf4j.Logger;
+import org.apache.commons.logging.Log;
 import org.springframework.aop.interceptor.CustomizableTraceInterceptor;
 
-import com.epam.common.exception.CoreException;
-import com.epam.core.controller.LoggerProfilerController;
+import com.epam.core.controller.LoggerProfilerControllerMBean;
+import com.epam.core.controller.MBeanRegisterService;
 
 
 public class TraceInterceptor extends CustomizableTraceInterceptor {
     
     private static final long serialVersionUID = 36323368610564953L;
     
-    private final LoggerProfilerController loggerProfilerController = new LoggerProfilerController();
+    private LoggerProfilerControllerMBean loggerProfilerController;
     
-    public TraceInterceptor() {
-        MBeanServer platformMbeanServer = ManagementFactory.getPlatformMBeanServer();
-        try {
-            platformMbeanServer.registerMBean(loggerProfilerController, new ObjectName("LoggerProfiler", "Name", "Controller"));
-        } catch (InstanceAlreadyExistsException | MBeanRegistrationException | NotCompliantMBeanException | MalformedObjectNameException e) {
-            throw new CoreException("Can't register MBean server: LoggerProfiler.Controller", e);
-        }
+    private MBeanRegisterService mBeanRegisterService;
+    
+    public void init() {
+        loggerProfilerController = mBeanRegisterService.getLoggerProfilerController();
     }
     
-    protected void writeToLog(Logger logger, String message, Throwable ex) {
+    public MBeanRegisterService getmBeanRegisterService() {
+        return mBeanRegisterService;
+    }
+    
+    public void setmBeanRegisterService(MBeanRegisterService mBeanRegisterService) {
+        this.mBeanRegisterService = mBeanRegisterService;
+    }
+    
+    @Override
+    protected void writeToLog(Log logger, String message, Throwable ex) {
         if (ex != null) {
             logger.info(message, ex);
         } else {
@@ -40,7 +37,8 @@ public class TraceInterceptor extends CustomizableTraceInterceptor {
         }
     }
     
-    protected boolean isInterceptorEnabled(MethodInvocation invocation, Logger logger) {
+    @Override
+    protected boolean isInterceptorEnabled(MethodInvocation invocation, Log logger) {
         return loggerProfilerController.isEnableProfiling();
     }
     

@@ -10,6 +10,7 @@ public class LoggerProfilerController implements LoggerProfilerControllerMBean {
     
     private boolean enableProfiling = true;
     
+    @Override
     public boolean isEnableProfiling() {
         return enableProfiling;
     }

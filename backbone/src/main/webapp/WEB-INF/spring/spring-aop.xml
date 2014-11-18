@@ -13,31 +13,17 @@ http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
 http://www.springframework.org/schema/util  
 http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 
-	<!-- <beans:bean id="repositoryLogger" class="com.epam.logger.RepositoryLogger"/> 
-		<aop:config> <aop:aspect ref="repositoryLogger"> <aop:pointcut id="repositoryPerformanceMeasuringWithArgs" 
-		expression="execution(* com.epam.repository.*.*(..)) and args(args,..)"/> 
-		<aop:pointcut id="repositoryPerformanceMeasuring" expression="execution(* 
-		com.epam.repository.*.*())"/> <aop:around pointcut-ref="repositoryPerformanceMeasuringWithArgs" 
-		method="measurePerformanceWithArgs" arg-names="args"/> <aop:around pointcut-ref="repositoryPerformanceMeasuring" 
-		method="measurePerformance"/> </aop:aspect> </aop:config> -->
-
-	<beans:bean name="traceInterceptor" class="com.epam.logger.TraceInterceptor">
-		<property name="enterMessage"
-			value="ENTER: $[targetClassShortName].$[methodName]($[arguments])" />
-		<property name="exitMessage"
-			value="EXIT: $[targetClassShortName].$[methodName]() : $[invocationTime]ms : $[returnValue]" />
+	<beans:bean id="repositoryLogger" class="com.epam.logger.RepositoryLogger" init-method="init">
+	    <beans:property name="mBeanRegisterService" ref="mBeanRegisterService" />
 	</beans:bean>
-
-	<beans:bean
-		class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
-		<beans:property name="beanNames" value="*Controller*" />
-		<beans:property name="proxyTargetClass" value="true" />
-		<beans:property name="interceptorNames">
-			<list>
-				<value>traceInterceptor</value>
-			</list>
-		</beans:property>
-		<beans:property name="order" value="2" />
-	</beans:bean>
+	
+	<aop:config>
+		<aop:aspect ref="repositoryLogger">
+			<aop:pointcut id="repositoryPerformanceMeasuringWithArgs" expression="execution(* com.epam.repository.*.*(..)) and args(args,..)" />
+			<aop:pointcut id="repositoryPerformanceMeasuring" expression="execution(* com.epam.repository.*.*())" />
+			<aop:around pointcut-ref="repositoryPerformanceMeasuringWithArgs" method="measurePerformanceWithArgs" arg-names="args" />
+			<aop:around pointcut-ref="repositoryPerformanceMeasuring" method="measurePerformance" />
+		</aop:aspect>
+	</aop:config>
 
 </beans>
