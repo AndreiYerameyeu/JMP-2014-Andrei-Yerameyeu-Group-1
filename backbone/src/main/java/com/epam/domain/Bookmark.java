@@ -1,7 +1,11 @@
 package com.epam.domain;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -15,6 +19,9 @@ public class Bookmark extends BaseEntity<Long> {
     
     @Column(name = "title")
     private String title;
+    
+    @OneToMany(mappedBy = "bookmark", fetch = FetchType.LAZY)
+    private List<Tag> tags;
     
     public Bookmark() {
         
@@ -34,6 +41,14 @@ public class Bookmark extends BaseEntity<Long> {
     
     public void setTitle(String title) {
         this.title = title;
+    }
+    
+    public List<Tag> getTags() {
+        return tags;
+    }
+    
+    public void setTags(List<Tag> tags) {
+        this.tags = tags;
     }
     
     @Override

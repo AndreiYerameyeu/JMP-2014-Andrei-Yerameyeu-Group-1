@@ -62,9 +62,8 @@ public class TagController {
                 List<Bookmark> bookmarks = counts.get(key);
                 if (null == bookmarks) {
                     bookmarks = new ArrayList<Bookmark>();
-                } else {
-                    bookmarks.add(bookmark);
                 }
+                bookmarks.add(bookmark);
                 counts.put(key, bookmarks);
             }
         }
@@ -82,7 +81,6 @@ public class TagController {
             }
             tagCountModels.add(tagCountModel);
         }
-        
         return tagCountModels;
     }
 }

@@ -1,6 +1,5 @@
 package com.epam.web.rest.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -13,11 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.epam.domain.Bookmark;
-import com.epam.domain.Tag;
 import com.epam.service.BookmarkService;
 import com.epam.service.TagService;
-import com.epam.web.view.model.BookmarkModel;
-import com.epam.web.view.model.TagModel;
 
 @RestController
 @RequestMapping("/bookmark")
@@ -35,26 +31,8 @@ public class BookmarkController {
     }
     
     @RequestMapping(method = { RequestMethod.GET })
-    public List<BookmarkModel> getAllBookmarks() {
-        List<BookmarkModel> bookmarkModels = new ArrayList<BookmarkModel>();
-        
-        List<Bookmark> allBookmarks = bookmarkService.findAll();
-        for (Bookmark bookmark : allBookmarks) {
-            BookmarkModel bookmarkModel = new BookmarkModel();
-            bookmarkModel.setTitle(bookmark.getTitle());
-            bookmarkModel.setUrl(bookmark.getUrl());
-            List<Tag> bookmarkTags = tagService.findAllByBookmark(bookmark.getId());
-            List<TagModel> tagModels = new ArrayList<TagModel>();
-            for (Tag bookmarkTag : bookmarkTags) {
-                TagModel tagModel = new TagModel();
-                tagModel.setTag(bookmarkTag.getTag());
-                tagModels.add(tagModel);
-            }
-            bookmarkModel.setTags(tagModels);
-            bookmarkModels.add(bookmarkModel);
-        }
-        
-        return bookmarkModels;
+    public List<Bookmark> getAllBookmarks() {
+        return bookmarkService.findAll();
     }
     
     @RequestMapping(value = { "/{id}" }, method = { RequestMethod.PUT })

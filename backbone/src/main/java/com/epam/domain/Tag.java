@@ -5,9 +5,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.BatchSize;
 
 @Entity
@@ -19,9 +20,10 @@ public class Tag extends BaseEntity<Long> {
     @Column(name = "tag")
     private String tag;
     
-    @OneToOne(fetch = FetchType.EAGER, cascade = (CascadeType.ALL))
+    @ManyToOne(fetch = FetchType.LAZY, cascade = (CascadeType.ALL))
     @JoinColumn(name = "id_bookmark")
     @BatchSize(size = 100)
+    @JsonIgnore
     private Bookmark bookmark;
     
     public Tag() {

@@ -89,14 +89,14 @@
 	<script src="<c:url value="${lib}/underscore.js"/>"></script>
 	<script src="<c:url value="${lib}/backbone.js"/>"></script>
 	<script src="<c:url value="${js}/app.js"/>"></script>
-	<script type="text/template" id="tagCount_template">
-		<a href="{{link}}">{{tag}}({{count}})</a>
+	<script type="text/template" id="tag-count-template">
+		<a href="{{=link}}">{{=tag}}({{=count}})</a>
 	</script>
-	<script type="text/template" id="bookmark_template">
-		{{title}}({{url}})
+	<script type="text/template" id="bookmark-template">
+		<a href="#/edit/{{=id}}" style="margin-right: 5px;" class="btn btn-warning">Edit</a><a href="#/delete/{{=id}}" style="margin-right: 5px;" class="btn btn-danger">Delete</a>{{=title}}({{=url}}){{ if(tags.length > 0) { }} | {{ for (var i = 0; i < tags.length; i++) { }}{{ var tag = tags[i]; }}{{= tag.tag }}{{ if (i < tags.length - 1) { }}, {{ } }}{{ }; }}{{ }; }} 
 	</script>
-	<script type="text/template" id="bookmarkTagList_template">
-		{{tag}}
+	<script type="text/template" id="bookmark-tag-list-template">
+		{{ _.each(tags, function(tagModel) { }} {{= tagModel.tag }}, {{ }); }}
 	</script>
 </body>
 </html>

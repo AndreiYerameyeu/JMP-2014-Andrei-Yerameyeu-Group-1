@@ -68,7 +68,7 @@ public class RepositoryLogger {
                     sb.append("Catched Exception=");
                     sb.append(ex);
                 }
-                log.debug(sb.toString());
+                log.info(sb.toString());
             }
         } else {
             try {
