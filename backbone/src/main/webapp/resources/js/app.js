@@ -34,7 +34,7 @@ bookmarkApp.routers.AppRouter = Backbone.Router.extend({
     	var tagCountListView = new bookmarkApp.views.TagCountListView();
         var bookmarkListView = new bookmarkApp.views.BookmarkListView();
         var bookmarkFormView = new bookmarkApp.views.BookmarkFormView();
-        bookmarkFormView.render(/*{bookmark : new bookmarkApp.models.BookmarkModel()}*/);
+        bookmarkFormView.render({model : new bookmarkApp.models.BookmarkModel()});
     },  
     saveBookmark: function(id) {
     	
@@ -93,9 +93,13 @@ bookmarkApp.views.BookmarkFormView = Backbone.View.extend({
     	'click #btnClear': 'clearForm'
     },
     render: function (options) {
-    	this.model = options;
+    	if (options !== undefined) {
+    		this.model = options.model;
+    	} else {
+    		this.model = new bookmarkApp.models.BookmarkModel();
+    	}
     	var that = this;
-    	this.$el.html(this.template);
+    	this.$el.html(this.template(this.model.toJSON()));
     	/*if(options.id) {
     		that.user = new User({id: options.id});
     		that.user.fetch({
@@ -113,7 +117,7 @@ bookmarkApp.views.BookmarkFormView = Backbone.View.extend({
     	
     },
     saveBookmark: function(event) {
-    	var bookmarkValues = $(event.delegateTarget).serializeObject();
+    	var bookmarkValues = $('#bookmark-form').serializeObject();
     	var bookmarkModel = new bookmarkApp.models.BookmarkModel();
     	bookmarkModel.save(bookmarkValues, {
     		success: function (bookmark) {
