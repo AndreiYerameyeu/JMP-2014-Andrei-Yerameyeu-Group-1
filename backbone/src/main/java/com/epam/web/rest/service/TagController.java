@@ -29,12 +29,12 @@ public class TagController {
     protected TagService tagService;
     
     @RequestMapping(value = { "/{id}" }, method = { RequestMethod.GET })
-    public Tag getTagById(@PathVariable String id) {
+    public Tag getTagById(HttpServletRequest request, @PathVariable String id) {
         return tagService.findOne(NumberUtils.toLong(id, 0));
     }
     
     @RequestMapping(params = { "bookmarkid" }, method = { RequestMethod.GET })
-    public List<Tag> getTagByBookmarkId(@RequestParam(value = "bookmarkid", required = true) String bookmarkid) {
+    public List<Tag> getTagByBookmarkId(HttpServletRequest request, @RequestParam(value = "bookmarkid", required = true) String bookmarkid) {
         Long bookmarkIdValue = NumberUtils.toLong(bookmarkid, -1L);
         if (bookmarkIdValue > 0) {
             return tagService.findAllByBookmark(bookmarkIdValue);
@@ -44,7 +44,7 @@ public class TagController {
     }
     
     @RequestMapping(method = { RequestMethod.GET })
-    public List<Tag> getAllTags() {
+    public List<Tag> getAllTags(HttpServletRequest request) {
         return tagService.findAll();
     }
     
