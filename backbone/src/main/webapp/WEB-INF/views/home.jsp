@@ -37,30 +37,8 @@
 			</div>
 		</div>
 		<div>
-			<div class="col-xs-6">
-				<form role="form" id="form">
-					<div class="alert alert-danger" style="display: none;">
-						<p></p>
-					</div>
-					<input type="hidden" id="id">
-					<div class="form-group">
-						<label for="bookmarkURL">Bookmark URL</label> <input type="url"
-							class="form-control" id="url" placeholder="Enter bookmark URL">
-					</div>
-					<div class="form-group">
-						<label for="bookmarkTitle">Bookmark Title</label> <input
-							type="text" class="form-control" id="title"
-							placeholder="Enter bookmark title">
-					</div>
-					<div class="form-group">
-						<label for="bookmarkTags">Tags: (separated by commas)</label> <input
-							type="text" class="form-control" id="tags"
-							placeholder="Enter bookmark tags">
-					</div>
-
-					<button id="btnSave" class="btn btn-success">Save</button>
-					<button id="btnClear" class="btn btn-default">Clear</button>
-				</form>
+			<div class="col-xs-6" id="formAppender">
+				
 			</div>
 		</div>
 		<div class="row">
@@ -97,6 +75,31 @@
 	</script>
 	<script type="text/template" id="bookmark-tag-list-template">
 		{{ _.each(tags, function(tagModel) { }} {{= tagModel.tag }}, {{ }); }}
+	</script>
+	<script type="text/template" id="bookmark-form-template">
+		<form role="form" id="form">
+			<div class="alert alert-danger" style="display: none;">
+				<p></p>
+			</div>
+			{{ if(model) { }}
+			<input type="hidden" id="id" name="id" value="{{= id }}">
+			{{ }; }}
+			<input type="hidden" id="id" name="id">
+			<div class="form-group">
+				<label for="bookmarkURL">Bookmark URL</label> 
+				<input type="url" name="url" class="form-control" id="url" placeholder="Enter bookmark URL" value="{{= url }}">
+			</div>
+			<div class="form-group">
+				<label for="bookmarkTitle">Bookmark Title</label> 
+				<input type="text" class="form-control" id="title" name="title"	placeholder="Enter bookmark title" value="{{= title }}">
+			</div>
+			<div class="form-group">
+				<label for="bookmarkTags">Tags: (separated by commas)</label> 
+				<input type="text" class="form-control" id="tags" name="tags" placeholder="Enter bookmark tags" value="{{ if(tags.length > 0) { }} | {{ for (var i = 0; i < tags.length; i++) { }}{{ var tag = tags[i]; }}{{= tag.tag }}{{ if (i < tags.length - 1) { }}, {{ } }}{{ }; }}{{ }; }}">
+			</div>
+			<button id="btnSave" class="btn btn-success">Save</button>
+			<button id="btnClear" class="btn btn-default">Clear</button>
+		</form>
 	</script>
 </body>
 </html>

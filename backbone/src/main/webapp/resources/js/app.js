@@ -33,6 +33,8 @@ bookmarkApp.routers.AppRouter = Backbone.Router.extend({
     home: function() {
     	var tagCountListView = new bookmarkApp.views.TagCountListView();
         var bookmarkListView = new bookmarkApp.views.BookmarkListView();
+        var bookmarkFormView = new bookmarkApp.views.BookmarkFormView();
+        bookmarkFormView.render(/*{bookmark : new bookmarkApp.models.BookmarkModel()}*/);
     },  
     saveBookmark: function(id) {
     	
@@ -50,6 +52,12 @@ bookmarkApp.routers.AppRouter = Backbone.Router.extend({
 });
 
 bookmarkApp.models.BookmarkModel = Backbone.Model.extend({
+	defaults: {
+	    url: '',
+	    title: '',
+	    tags: ['']
+	  }, 
+	urlRoot: 'bookmark'
 });
 
 bookmarkApp.models.TagModel = Backbone.Model.extend({
@@ -74,9 +82,10 @@ bookmarkApp.collections.BookmarkListCollection = Backbone.Collection.extend({
 });
 
 bookmarkApp.views.BookmarkFormView = Backbone.View.extend({
-    el: $('#form'),
+	model: bookmarkApp.models.BookmarkModel,
+    el: $('#formAppender'),
     initialize: function() {
-        
+    	this.template = _.template($('#bookmark-form-template').html());
     },
     events: {
     	'submit #form': 'saveBookmark',
@@ -84,7 +93,9 @@ bookmarkApp.views.BookmarkFormView = Backbone.View.extend({
     	'click #btnClear': 'clearForm'
     },
     render: function (options) {
+    	this.model = options;
     	var that = this;
+    	this.$el.html(this.template);
     	/*if(options.id) {
     		that.user = new User({id: options.id});
     		that.user.fetch({
@@ -102,11 +113,14 @@ bookmarkApp.views.BookmarkFormView = Backbone.View.extend({
     	
     },
     saveBookmark: function(event) {
-    	var bookmarkValues = $(event.currentTaget).serializeObject();
+    	var bookmarkValues = $(event.delegateTarget).serializeObject();
     	var bookmarkModel = new bookmarkApp.models.BookmarkModel();
     	bookmarkModel.save(bookmarkValues, {
     		success: function (bookmark) {
     			router.navigate('', {trigger:true});
+    		},
+    		error: function (error) {
+    			console.log(error);
     		}
     	});
     	return false;

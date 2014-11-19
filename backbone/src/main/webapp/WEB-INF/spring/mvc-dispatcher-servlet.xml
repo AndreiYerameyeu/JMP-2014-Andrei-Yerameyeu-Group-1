@@ -16,16 +16,10 @@ http://www.springframework.org/schema/context/spring-context.xsd">
 
 	<context:component-scan base-package="com.epam.web" />
 
-	<mvc:resources mapping="/resources/**" location="/resources/"
-		cache-period="31556926" />
+	<mvc:resources mapping="/resources/**" location="/resources/" cache-period="31556926" />
 
-	<!-- <mvc:view-controller path="/" view-name="home" /> <mvc:view-controller 
-		path="/index.*" view-name="home" /> -->
-
-	<beans:bean
-		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<beans:property name="viewClass"
-			value="org.springframework.web.servlet.view.JstlView" />
+	<beans:bean	class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<beans:property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
 		<beans:property name="prefix" value="/WEB-INF/views/" />
 		<beans:property name="suffix" value=".jsp" />
 	</beans:bean>
@@ -40,14 +34,15 @@ http://www.springframework.org/schema/context/spring-context.xsd">
 
 	<mvc:interceptors>
 		<!-- Changes the locale when a 'lang' request parameter is sent; e.g. /?lang=de -->
-		<beans:bean
-			class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
+		<beans:bean	class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
 			<beans:property name="paramName" value="lang" />
+		</beans:bean>
+		<beans:bean class="com.epam.web.filter.HttpRequestTracerInterceptor" init-method="init">
+			<beans:property name="mBeanRegisterService" ref="mBeanRegisterService" />
 		</beans:bean>
 	</mvc:interceptors>
 
-	<beans:bean id="localeResolver"
-		class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
+	<beans:bean id="localeResolver"	class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
 		<beans:property name="defaultLocale" value="ru" />
 	</beans:bean>
 
@@ -59,8 +54,7 @@ http://www.springframework.org/schema/context/spring-context.xsd">
 			value="EXIT: $[targetClassShortName].$[methodName]() : $[invocationTime]ms" />
 	</beans:bean>
 
-	<beans:bean
-		class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+	<beans:bean	class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
 		<beans:property name="beanNames" value="*Controller" />
 		<beans:property name="proxyTargetClass" value="true" />
 		<beans:property name="interceptorNames">

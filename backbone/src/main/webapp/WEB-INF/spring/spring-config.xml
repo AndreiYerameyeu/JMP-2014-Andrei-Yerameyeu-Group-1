@@ -32,6 +32,4 @@ http://www.springframework.org/schema/cache/spring-cache.xsd">
 	
 	<bean id="mBeanRegisterService" class="com.epam.core.controller.MBeanRegisterService" init-method="init"/>
 	
-	<import resource="mvc-dispatcher-servlet.xml" />
-	
 </beans>
