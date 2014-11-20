@@ -55,9 +55,20 @@ bookmarkApp.models.BookmarkModel = Backbone.Model.extend({
 	defaults: {
 	    url: '',
 	    title: '',
-	    tags: ['']
+	    tags: ''
 	  }, 
-	urlRoot: 'bookmark'
+	urlRoot: 'bookmark',
+	validate: function(attrs) {
+		if (attrs.url === undefined || attrs.url.length < 1) {
+			return 'No url';
+		}
+		if (attrs.title === undefined || attrs.title.length < 1) {
+			return 'No title';
+		}
+		if (attrs.tags === undefined || attrs.tags.length < 1) {
+			return 'No tags';
+		}
+	} 
 });
 
 bookmarkApp.models.TagModel = Backbone.Model.extend({
@@ -118,8 +129,8 @@ bookmarkApp.views.BookmarkFormView = Backbone.View.extend({
     },
     saveBookmark: function(event) {
     	var bookmarkValues = $('#bookmark-form').serializeObject();
-    	var bookmarkModel = new bookmarkApp.models.BookmarkModel();
-    	bookmarkModel.save(bookmarkValues, {
+    	var bookmarkModel = new bookmarkApp.models.BookmarkModel(bookmarkValues);
+    	bookmarkModel.save({
     		success: function (bookmark) {
     			router.navigate('', {trigger:true});
     		},
@@ -237,6 +248,8 @@ $(document).ready(function() {
 		interpolate: /\{\{=(.+?)\}\}/g,
 		escape:      /\{\{-(.+?)\}\}/g
 	};
+	/*Backbone.emulateHTTP = true;
+	Backbone.emulateJSON = true;*/
     var router = new bookmarkApp.routers.AppRouter();
     Backbone.history.start();
 });
