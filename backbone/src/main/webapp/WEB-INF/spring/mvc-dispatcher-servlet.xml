@@ -64,5 +64,19 @@ http://www.springframework.org/schema/context/spring-context.xsd">
 		</beans:property>
 		<beans:property name="order" value="2" />
 	</beans:bean>
+	
+	<beans:bean name="handlerAdapter" class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+    	<beans:property name="messageConverters">
+        	<beans:list>
+            	<beans:bean class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter"/>
+            	<beans:ref bean="jsonConverter"/>
+        	</beans:list>
+    	</beans:property>
+    	<beans:property name="requireSession" value="false"/>
+	</beans:bean>
+	
+	<beans:bean id="jsonConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+    	<beans:property name="supportedMediaTypes" value="application/json"/>
+	</beans:bean>
 
 </beans:beans>

@@ -248,8 +248,6 @@ $(document).ready(function() {
 		interpolate: /\{\{=(.+?)\}\}/g,
 		escape:      /\{\{-(.+?)\}\}/g
 	};
-	/*Backbone.emulateHTTP = true;
-	Backbone.emulateJSON = true;*/
     var router = new bookmarkApp.routers.AppRouter();
     Backbone.history.start();
 });

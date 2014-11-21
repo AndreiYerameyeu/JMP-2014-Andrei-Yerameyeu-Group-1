@@ -7,19 +7,23 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.epam.domain.Bookmark;
 import com.epam.service.BookmarkService;
 import com.epam.service.TagService;
+import com.epam.web.view.binder.BookmarkModelBinder;
 
 @RestController
 @RequestMapping("/bookmark")
-public class BookmarkController {
+public class BookmarkController extends AbstractRestController {
     
     @Autowired
     protected BookmarkService bookmarkService;
@@ -37,26 +41,30 @@ public class BookmarkController {
         return bookmarkService.findAll();
     }
     
-    @RequestMapping(value = { "/{id}" }, method = { RequestMethod.PUT })
-    public Bookmark saveBookmark(HttpServletRequest request, @PathVariable String id, @RequestParam(value = "url", required = false) String url, @RequestParam(value = "title", required = false) String title, @RequestParam(value = "tags", required = false) String tags) {
+    @RequestMapping(value = { "/{id}" }, method = { RequestMethod.PUT }, produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE })
+    public @ResponseBody
+    Bookmark saveBookmark(HttpServletRequest request, @PathVariable String id, @RequestBody BookmarkModelBinder body, BindingResult results) {
+        processRestRequest(body, results);
         Long idValue = NumberUtils.toLong(id, 0);
         if (idValue < 1) {
             return null;
         }
-        String[] tagsArray = StringUtils.split(tags, ',');
-        Bookmark toSave = bookmarkService.save(idValue, title, url, tagsArray);
+        String[] tagsArray = StringUtils.split(body.getTags(), ',');
+        Bookmark toSave = bookmarkService.save(idValue, body.getTitle(), body.getUrl(), tagsArray);
         return toSave;
     }
     
-    @RequestMapping(method = { RequestMethod.POST })
-    public Bookmark createBookmark(HttpServletRequest request, @RequestParam(value = "url", required = true) String url, @RequestParam(value = "title", required = true) String title, @RequestParam(value = "tags", required = true) String tags) {
-        String[] tagsArray = StringUtils.split(tags, ',');
-        Bookmark newBookmark = bookmarkService.save(title, url, tagsArray);
+    @RequestMapping(method = { RequestMethod.POST }, produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE })
+    public @ResponseBody
+    Bookmark createBookmark(HttpServletRequest request, @RequestBody BookmarkModelBinder body, BindingResult results) {
+        processRestRequest(body, results);
+        String[] tagsArray = StringUtils.split(body.getTags(), ',');
+        Bookmark newBookmark = bookmarkService.save(body.getTitle(), body.getUrl(), tagsArray);
         
         return newBookmark;
     }
     
-    @RequestMapping(value = { "/{id}" }, method = { RequestMethod.DELETE })
+    @RequestMapping(value = { "/{id}" }, method = { RequestMethod.DELETE }, produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE })
     public void deleteBookmark(HttpServletRequest request, @PathVariable String id) {
         Long idValue = NumberUtils.toLong(id, 0);
         tagService.delete(idValue);

@@ -23,7 +23,7 @@ import com.epam.web.view.model.TagCountModel;
 
 @RestController
 @RequestMapping("/tag")
-public class TagController {
+public class TagController extends AbstractRestController {
     
     @Autowired
     protected TagService tagService;
