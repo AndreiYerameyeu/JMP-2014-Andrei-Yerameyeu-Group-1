@@ -1,0 +1,1 @@
+mvn compile exec:java -Dexec.mainClass=epam.jms.client.console.ConsoleView
