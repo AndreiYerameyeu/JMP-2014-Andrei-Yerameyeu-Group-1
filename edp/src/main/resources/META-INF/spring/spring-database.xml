@@ -16,5 +16,9 @@ http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
 		<beans:property name="poolPreparedStatements" value="true" />
 		<beans:property name="initialSize" value="${dbcp.initialSize}" />
 	</beans:bean>
+	
+	<beans:bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<beans:property name="dataSource" ref="dataSource"/>
+	</beans:bean>
 
 </beans:beans>

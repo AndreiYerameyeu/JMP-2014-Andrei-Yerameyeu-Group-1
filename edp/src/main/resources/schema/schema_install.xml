@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet id="1" author="Dmitry_Shanko">
+        <createTable tableName="tblTicket">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="sessionId" type="bigint"/>
+            <column name="row" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="position" type="int">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <rollback>
+            <dropTable tableName="tblTicket"/>
+        </rollback>
+    </changeSet>
+    
+    <changeSet id="2" author="Dmitry_Shanko">
+        <sqlFile path="src/main/resources/sql/install_data_1.sql"/>
+        <rollback>
+        	<delete tableName="tblTicket"/>
+        </rollback>
+    </changeSet>
+
+    
+</databaseChangeLog>
